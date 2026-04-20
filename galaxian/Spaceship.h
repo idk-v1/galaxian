@@ -13,11 +13,11 @@
 class Spaceship : public ObjectBase
 {
 public:
-    Spaceship(int x, int y) :
+    Spaceship(int x, int y, int id) : id(id),
         ObjectBase(x, y, 16 * SCALE, 16 * SCALE)
     {
         setVel(2.f);
-        tx = 0;
+        tx = 144 + id * 32;
         ty = 64;
     }
 
@@ -32,10 +32,11 @@ public:
 
     void shoot(EventQueue& events)
     {
-        if (canShoot)
+        if (canShoot && shotsOut == 0)
         {
-            events.spawnLaser(x, y, true, this);
-            canShoot = false;
+            events.spawnLaser(x - getWidth() / 4.f, y, true, this);
+            events.spawnLaser(x + getWidth() / 4.f, y, true, this);
+            shotsOut = 2;
         }
     }
 
@@ -47,7 +48,12 @@ public:
             setPos(SCREENW-1 - rect.w / 2.f, y);
     }
 
-    void setCanShoot(bool value) {canShoot = value;}
+    void setCanShoot(bool value) {canShoot = value; shotsOut = 0;}
+    void returnShot()
+    {
+        if (shotsOut > 0)
+            --shotsOut;
+    }
 
     void kill()
     {
@@ -58,19 +64,32 @@ public:
     
     int getLives() {return lives;}
     void setLives(int count) {lives = count;}
+    void resetLives() {lives = 5; extraLives = 0;}
 
     int getScore() {return score;}
     void setScore(int value) {score = value;}
-    void addToScore(int value) {score += value;}
+    void addToScore(int value)
+    {
+        score += value;
+        if (score / 5000 - extraLives > 0)
+        {
+            ++lives;
+            ++extraLives;
+        }
+    }
 
 private:
+    int id;
+    
     int score = 0;
     
     int lives = 4;
+    int extraLives = 0;
 
     bool alive = true;
     
     bool canShoot = true;
+    int shotsOut = 0;
 };
 
 #endif

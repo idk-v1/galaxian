@@ -88,8 +88,8 @@ void AlienBase::update(EventQueue& events, float px, int attackCount, int alienC
             if (rand() % 300 == 0 && !cooldown)
             {
                 cooldown = 60;
-                events.spawnLaser(x - getWidth() / 2, y + getHeight(), false);
-                events.spawnLaser(x + getWidth() / 2, y + getHeight(), false);
+                events.spawnLaser(x - getWidth() / 4, y + getHeight(), false);
+                events.spawnLaser(x + getWidth() / 4, y + getHeight(), false);
             }
             
             if (!lead)

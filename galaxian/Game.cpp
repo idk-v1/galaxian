@@ -9,7 +9,7 @@ void Game::init()
 {
     srand(time(NULL));
     
-    spritesheet = new Image("res/galaxianSpritesheet.png");
+    spritesheet = new Image("res/galaxianSpritesheet2.png");
     
     for (int i = 0; i < 100; i++)
         stars.push_back(Star(false));
@@ -19,8 +19,8 @@ void Game::init()
             alienGrid[y][x] = NULL;
 
     aliens.reserve(GRIDW * GRIDH);
-    players.push_back(Spaceship(SCREENW * 0.66, PLAYER_Y));
-    players.push_back(Spaceship(SCREENW * 0.33, PLAYER_Y));
+    players.push_back(Spaceship(SCREENW * 0.66, PLAYER_Y, 0));
+    players.push_back(Spaceship(SCREENW * 0.33, PLAYER_Y, 1));
 
     introWave();
 
@@ -37,6 +37,9 @@ void Game::init()
 
 void Game::quit()
 {
+    for (int i = 0; i < players.size(); ++i)
+        highscore = std::max(highscore, players[i].getScore());
+    
     delete spritesheet;
     spritesheet = NULL;
     
@@ -382,7 +385,7 @@ void Game::draw(Surface& surface)
                 pos = SCREENW-1 - (l + 1) * 16;
             else if (i == 1)
                 pos = l * 16;
-            drawImage(surface, spritesheet, Rect(pos, 16, 16, 16), 16, 64);
+            drawImage(surface, spritesheet, Rect(pos, 16, 16, 16), 160 + 32 * i, 64);
         }
 
     // draw scores
@@ -499,7 +502,7 @@ void Game::update()
             {
                 highscore = std::max(highscore, players[i].getScore());
                 players[i].setScore(0);
-                players[i].setLives(5);
+                players[i].resetLives();
                 events.spawnPlayer(SCREENW / ((float)players.size()+1) * (players.size()-i),
                     PLAYER_Y, i, 60 * 1);
             }
@@ -792,7 +795,7 @@ void Game::processKillEvents()
         if (pLasers[i].shouldDelete())
         {
             if (pLasers[i].getOwner())
-                ((Spaceship*)pLasers[i].getOwner())->setCanShoot(true);
+                ((Spaceship*)pLasers[i].getOwner())->returnShot();
             std::swap(pLasers[i], pLasers.back());
             pLasers.pop_back();
         }
