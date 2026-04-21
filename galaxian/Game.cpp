@@ -79,7 +79,7 @@ void Game::newWave()
     pLasers.clear();
     aLasers.clear();
     
-    peaceTime = 60 * 4;
+    peaceTime = 60 * 5;
     timer = 0;
     
     //events.spawnEvents.clear();
@@ -279,7 +279,7 @@ void Game::updateAliens()
             {
                 case 0: case 1: if (timer >= 10 * 60) isTime = true; break;
                 case 2: if (timer >= 30 * 60) isTime = true; break;
-                case 3: case 4: isTime = true; break;
+                case 3: case 4: case 5: isTime = true; break;
             }
             if (isTime)
             {
@@ -362,10 +362,10 @@ void Game::draw(Surface& surface)
         explosions[i].draw(surface, spritesheet);
     
     for (int i = 0; i < pLasers.size(); ++i)
-        pLasers[i].draw(surface);
+        pLasers[i].draw(surface, spritesheet);
 
     for (int i = 0; i < aLasers.size(); ++i)
-        aLasers[i].draw(surface);
+        aLasers[i].draw(surface, spritesheet);
 
     for (int i = 0; i < aliens.size(); ++i)
     {
@@ -385,7 +385,7 @@ void Game::draw(Surface& surface)
                 pos = SCREENW-1 - (l + 1) * 16;
             else if (i == 1)
                 pos = l * 16;
-            drawImage(surface, spritesheet, Rect(pos, 16, 16, 16), 160 + 32 * i, 64);
+            drawImage(surface, spritesheet, Rect(pos, SCREENH-16, 16, 16), 160 + 32 * i, 64);
         }
 
     // draw scores
@@ -614,12 +614,12 @@ void Game::processSpawnEvents()
             }
 
             case TYPE_LASER:
-                aLasers.push_back(Laser(spawn.x, spawn.y, false, NULL));
+                aLasers.push_back(Laser(spawn.x, spawn.y, false, NULL, spawn.gx));
                 break;
 
             case TYPE_LASER + 1: // player laser
                 pLasers.push_back(Laser(spawn.x, spawn.y, true,
-                                        (Spaceship*)spawn.owner));
+                                        (Spaceship*)spawn.owner, spawn.gx));
                 break;
 
             case TYPE_BLUE:
@@ -786,7 +786,7 @@ void Game::processKillEvents()
         if (players[i].shouldDelete())
         {
             events.spawnPlayer(SCREENW / ((float)players.size()+1) * (players.size()-i),
-                PLAYER_Y, i, 60 * 5);
+                PLAYER_Y, i, 60 * 4.5);
             players[i].kill();
             waitForPlayer = true;
         }

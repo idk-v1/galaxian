@@ -124,12 +124,12 @@ public:
         spawnEvents.push_back(spawn);
     }
     
-    inline void spawnLaser(int x, int y, bool player, void* owner = NULL, int delay = 0)
+    void spawnLaser(int x, int y, bool player, void* owner = NULL, int type = 0, int delay = 0)
     {
         SpawnEvent spawn;
         spawn.x = x;
         spawn.y = y;
-        spawn.gx = 0;
+        spawn.gx = type;
         spawn.gy = 0;
         spawn.type = TYPE_LASER + player;
         spawn.owner = owner;

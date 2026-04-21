@@ -12,7 +12,7 @@ class Laser : public ObjectBase
 {
 public:
     Laser() = default;
-    Laser(int x, int y, bool player, ObjectBase* owner = NULL);
+    Laser(int x, int y, bool player, ObjectBase* owner = NULL, int type = 0);
 
     void update(EventQueue& events);
 
@@ -20,6 +20,8 @@ public:
 
 private:
     bool fromPlayer;
+    int projType;
+    int timer = 0;
     ObjectBase* owner;
 };
 
