@@ -170,6 +170,8 @@ void Game::updatePlayers()
     {
         if (players[0].isAlive())
         {
+            if (kbd[SDLK_RSHIFT])
+                players[0].incShootMode();
             int move = 0;
             if (kbd[SDLK_LEFT]) move -= 1;
             if (kbd[SDLK_RIGHT]) move += 1;
@@ -183,6 +185,8 @@ void Game::updatePlayers()
     {
         if (players[1].isAlive())
         {
+            if (kbd[SDLK_LSHIFT])
+                players[1].incShootMode();
             int move = 0;
             if (kbd[SDLK_a]) move -= 1;
             if (kbd[SDLK_d]) move += 1;
@@ -313,8 +317,11 @@ void Game::updateLasers()
             if (pLasers[i].collides(aliens[a]))
             {
                 events.kill(aliens[a], 1);
-                events.kill(&pLasers[i]);
-                ((Spaceship*)pLasers[i].getOwner())->addToScore(aliens[a]->getScore());
+                if (pLasers[i].getProjType() != 1)
+                {
+                    events.kill(&pLasers[i]);
+                    ((Spaceship*)pLasers[i].getOwner())->addToScore(aliens[a]->getScore());
+                }
             }
     }
 
@@ -328,7 +335,10 @@ void Game::updateLasers()
                 if (aLasers[i].collides(&players[p]))
                 {
                     events.kill(&players[p], 2);
-                    events.kill(&aLasers[i]);
+                    if (aLasers[i].getProjType() != 1)
+                    {
+                        events.kill(&aLasers[i]);
+                    }
                 }
             }
     }
@@ -378,6 +388,7 @@ void Game::draw(Surface& surface)
 
     // draw lives
     for (int i = 0; i < players.size(); ++i)
+    {
         for (int l = 0; l < players[i].getLives(); ++l)
         {
             int pos = 0;
@@ -387,6 +398,12 @@ void Game::draw(Surface& surface)
                 pos = l * 16;
             drawImage(surface, spritesheet, Rect(pos, SCREENH-16, 16, 16), 160 + 32 * i, 64);
         }
+        if (players[i].getShootMode() == 1)
+        {
+            int pos = (i == 0 ? pos = SCREENW-1 - 16 : 0);
+            drawImage(surface, spritesheet, Rect(pos, SCREENH-32, 16, 16), 48, 80);
+        }
+    }
 
     // draw scores
     std::string p0Score = std::to_string(players[0].getScore());

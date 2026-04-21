@@ -28,20 +28,34 @@ public:
         canShoot = true;
         alive = true;
         reqDel = false;
+        shootMode = 0;
+        modeSwitchCooldown = 0;
     }
 
     void shoot(EventQueue& events)
     {
-        if (canShoot && shotsOut == 0)
+        if (canShoot && shotsOut == 0 && cooldown == 0)
         {
-            events.spawnLaser(x - getWidth() / 4.f, y, true, this);
-            events.spawnLaser(x + getWidth() / 4.f, y, true, this);
-            shotsOut = 2;
+            if (shootMode == 0)
+            {
+                events.spawnLaser(x - getWidth() / 4.f, y, true, this, 0);
+                events.spawnLaser(x + getWidth() / 4.f, y, true, this, 0);
+                shotsOut = 2;
+            }
+            else if (shootMode == 1)
+            {
+                events.spawnLaser(x, y, true, this, 1);
+                shotsOut = 1;
+                cooldown = 60 * 3;
+            }
         }
     }
 
     void update()
     {
+        if (cooldown) --cooldown;
+        if (modeSwitchCooldown) --modeSwitchCooldown;
+        
         if (rect.x < 0)
             setPos(rect.w / 2.f, y);
         if (rect.x + rect.w >= SCREENW)
@@ -78,6 +92,16 @@ public:
         }
     }
 
+    void incShootMode()
+    {
+        if (modeSwitchCooldown == 0)
+        {
+            shootMode = (shootMode+1) % 2;
+            modeSwitchCooldown = 60 * 3;
+        }
+    }
+    int getShootMode() {return shootMode;}
+
 private:
     int id;
     
@@ -90,6 +114,10 @@ private:
     
     bool canShoot = true;
     int shotsOut = 0;
+
+    int shootMode = 0;
+    int cooldown = 0;
+    int modeSwitchCooldown = 0;
 };
 
 #endif

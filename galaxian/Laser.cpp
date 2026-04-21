@@ -13,6 +13,7 @@ Laser::Laser(int x, int y, bool player, ObjectBase* owner, int type)
             ty = 64;
         else
             ty = 72;
+        setPos(x, y);
         setVel(3.f);
     }
     else if (projType == 1)
@@ -21,7 +22,8 @@ Laser::Laser(int x, int y, bool player, ObjectBase* owner, int type)
         ty = 96;
         rect.w = 32;
         rect.h = 32;
-        setVel(1.f);
+        setPos(x, y);
+        setVel(0.5f);
     }
     fromPlayer = player;
 }

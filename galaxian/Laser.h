@@ -18,6 +18,8 @@ public:
 
     ObjectBase* getOwner() {return owner;}
 
+    int getProjType() {return projType;}
+
 private:
     bool fromPlayer;
     int projType;
