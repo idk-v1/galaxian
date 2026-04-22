@@ -3,28 +3,15 @@
 
 #include "Laser.h"
 
-Laser::Laser(int x, int y, bool player, ObjectBase* owner, int type)
-    : ObjectBase(x, y, 2 * SCALE, 6 * SCALE), owner(owner), projType(type)
+Laser::Laser(int x, int y, bool player, ObjectBase* owner)
+    : ObjectBase(x, y, 2 * SCALE, 6 * SCALE), owner(owner)
 {
-    if (projType == 0)
-    {
-        tx = 208;
-        if (player)
-            ty = 64;
-        else
-            ty = 72;
-        setPos(x, y);
-        setVel(3.f);
-    }
-    else if (projType == 1)
-    {
-        tx = 64;
-        ty = 96;
-        rect.w = 32;
-        rect.h = 32;
-        setPos(x, y);
-        setVel(0.5f);
-    }
+    tx = 208;
+    if (player)
+        ty = 64;
+    else
+        ty = 72;
+    setVel(3.f);
     fromPlayer = player;
 }
 
@@ -39,11 +26,4 @@ void Laser::update(EventQueue& events)
         events.kill(this);
     if (rect.y > SCREENH)
         events.kill(this);
-
-    if (projType == 1)
-    {
-        if (++timer > 60 * 3)
-            events.kill(this);
-        tx = 64 + (timer / 15 % 2) * 32;
-    }
 }
